@@ -5,18 +5,29 @@ import android.util.Log;
 public class PbkrContext {
 
     public static PbkrContext instance = new PbkrContext();
+    public int playStatus;
+    public int pauseStatus;
+    public int stopStatus;
+    public String currentProject;
+    public String currentTrack;
+    public String currentTimeCode;
+    private String mServerIp;
+    private Integer mServerPortIn;
+    private Integer mServerPortOut;
 
     private PbkrContext()
     {
         this.setServerPortIn(8000);
         this.setServerPortOut(9000);
         this.setServerIp("192.168.22.1");
+        this.currentProject = "No project loaded";
+        this.currentTrack = "None";
+        this.playStatus = -1;
+        this.stopStatus = -1;
+        this.pauseStatus = -1;
+        this.currentTimeCode = "--:--";
     }
 
-
-    private String mServerIp;
-    private Integer mServerPortIn;
-    private Integer mServerPortOut;
 
     public String getServerIp() {
         return mServerIp;

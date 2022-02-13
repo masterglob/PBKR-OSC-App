@@ -47,5 +47,6 @@ public class MainActivity extends AppCompatActivity {
         });*/
         mOSC = PbkrOSC.instance;
         Log.d("MainActivity", "onCreate");
+        mOSC.setMainActivity(this);
     }
 }
