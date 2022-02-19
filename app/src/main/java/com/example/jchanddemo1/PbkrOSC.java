@@ -78,13 +78,14 @@ public class PbkrOSC {
         final Pattern reCtrlStop = Pattern.compile("^/pbkrctrl/pStop$");
         final Pattern reCtrlTimeCode = Pattern.compile("^/pbkrctrl/timecode$");
 
+        PbkrContext context = PbkrContext.instance;
 
         while (mUdp.isRunning()) {
             if (mPingSent == false) {
                 mUdp.send(new PbkrUDP_Itf.OSC_Msg("/ping"));
                 Log.i("OSC", "send PING");
                 mPingSent = true;
-                mUdp.send(new PbkrUDP_Itf.OSC_Msg("/refresh"));
+                // mUdp.send(new PbkrUDP_Itf.OSC_Msg("/refresh")); // not required because already send by ping answer
             }
             else {
                 PbkrUDP_Itf.OSC_Msg msg = mUdp.getNextMessage(1000);
@@ -117,45 +118,45 @@ public class PbkrOSC {
 
                     m = reCtrlPlay.matcher(name);
                     if (m.matches()){
-                        PbkrContext.instance.playStatus = (param.getFloatValue() > 0.01 ? 1 : 0);
-                        Log.e("OSC recevied reCtrlPlay", "PbkrContext.instance.playStatus=" +String.valueOf(PbkrContext.instance.playStatus));
+                        context.playStatus = (param.getFloatValue() > 0.01 ? 1 : 0);
+                        Log.e("OSC recevied reCtrlPlay", "ctxt.playStatus=" +String.valueOf(context.playStatus));
                         m_homeFragment.refreshPlayStatus();
                         continue;
                     }
 
                     m = reCtrlPause.matcher(name);
                     if (m.matches()){
-                        PbkrContext.instance.pauseStatus = (param.getFloatValue() > 0.01 ? 1 : 0);
-                        Log.e("OSC recevied pauseStatus", "PbkrContext.instance.pauseStatus=" +String.valueOf(PbkrContext.instance.pauseStatus));
+                        context.pauseStatus = (param.getFloatValue() > 0.01 ? 1 : 0);
+                        Log.e("OSC recevied pauseStatus", "ctxt.pauseStatus=" +String.valueOf(context.pauseStatus));
                         m_homeFragment.refreshPlayStatus();
                         continue;
                     }
 
                     m = reCtrlStop.matcher(name);
                     if (m.matches()){
-                        PbkrContext.instance.stopStatus = (param.getFloatValue() > 0.01 ? 1 : 0);
-                        Log.e("OSC recevied reCtrlStop", "PbkrContext.instance.stopStatus=" +String.valueOf(PbkrContext.instance.stopStatus));
+                        context.stopStatus = (param.getFloatValue() > 0.01 ? 1 : 0);
+                        Log.e("OSC recevied reCtrlStop", "ctxt.stopStatus=" +String.valueOf(context.stopStatus));
                         m_homeFragment.refreshPlayStatus();
                         continue;
                     }
 
                     m = reCtrlTimeCode.matcher(name);
                     if (m.matches()){
-                        PbkrContext.instance.currentTimeCode = paramStr;
+                        context.currentTimeCode = paramStr;
                         m_homeFragment.refreshCurrentTimeCode();
                         continue;
                     }
 
                     m = reCurrProjectName.matcher(name);
                     if (m.matches()){
-                        PbkrContext.instance.currentProject = paramStr;
+                        context.currentProject = paramStr;
                         m_homeFragment.refreshCurrentProjectName();
                         continue;
                     }
 
                     m = reCurrTrackName.matcher(name);
                     if (m.matches()){
-                        PbkrContext.instance.currentTrack = paramStr;
+                        context.currentTrack = paramStr;
                         m_homeFragment.refreshCurrentTrackName();
                         continue;
                     }

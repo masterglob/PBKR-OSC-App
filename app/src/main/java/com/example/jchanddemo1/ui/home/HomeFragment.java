@@ -29,6 +29,9 @@ public class HomeFragment extends Fragment {
     private ImageButton m_wgtPlayBtn = null;
     private ImageButton m_wgtPauseBtn = null;
     private ImageButton m_wgtStopBtn = null;
+    private ImageButton m_wgtBtnRefresh = null;
+    private ImageButton m_wgtBtnFF = null;
+    private ImageButton m_wgtBtnRew = null;
     private Handler mHandler;
     private int mStopActive = -1;
     private int mPlayActive = -1;
@@ -89,6 +92,29 @@ public class HomeFragment extends Fragment {
 
         m_wgtTimeCode = root.findViewById(R.id.labelTimeCode);
 
+        m_wgtBtnRefresh = root.findViewById((R.id.btnSync));
+        m_wgtBtnRefresh.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                PbkrContext.instance.playStatus = -1;
+                PbkrContext.instance.stopStatus = 1;
+                PbkrOSC.instance.send("/pbkrctrl/pPause", 1.0f);
+                refreshPlayStatus();
+            }
+        });
+
+        m_wgtBtnFF = root.findViewById(R.id.imageBtnFastForward);
+        m_wgtBtnFF.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                PbkrOSC.instance.send("/pbkrctrl/pFastForward", 1.0f);
+            }
+        });
+        m_wgtBtnRew = root.findViewById(R.id.imageBtnRewind);
+        m_wgtBtnRew.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                PbkrOSC.instance.send("/pbkrctrl/pBackward", 1.0f);
+            }
+        });
+
         PbkrOSC.instance.setMainHomePage(this);
 
         refreshAll();
@@ -139,6 +165,7 @@ public class HomeFragment extends Fragment {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
+                final int BLUE2 = 0xFF0099CC;
                 final int bPlayActive = PbkrContext.instance.playStatus;
                 final int bPauseActive = PbkrContext.instance.pauseStatus;
                 final int bStopActive = PbkrContext.instance.stopStatus;
@@ -146,6 +173,10 @@ public class HomeFragment extends Fragment {
                     mStopActive = bStopActive;
                     m_wgtStopBtn.setClickable(bStopActive > 0);
                     m_wgtStopBtn.setBackgroundColor(bStopActive > 0? Color.RED : Color.GRAY);
+                    m_wgtBtnFF.setBackgroundColor(bStopActive == 0? Color.GRAY : BLUE2);
+                    m_wgtBtnRew.setBackgroundColor(bStopActive == 0? Color.GRAY : BLUE2);
+                    m_wgtBtnFF.setClickable(bStopActive > 0);
+                    m_wgtBtnRew.setClickable(bStopActive > 0);
                 }
 
                 if (bPlayActive != mPlayActive){

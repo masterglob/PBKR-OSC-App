@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/transparent"
     tools:context=".ui.home.HomeFragment">
 
     <TextView
@@ -140,5 +141,20 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toTopOf="@+id/tableLayout"
         app:layout_constraintEnd_toEndOf="@+id/tableLayout" />
+
+    <ImageButton
+        android:id="@+id/btnSync"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:background="@color/cardview_shadow_end_color"
+        android:scaleType="fitXY"
+        android:src="@android:drawable/stat_notify_sync_noanim"
+        android:tint="@color/purple_700"
+        app:layout_constraintBottom_toTopOf="@+id/labelTimeCode"
+        app:layout_constraintEnd_toEndOf="@+id/tableLayout"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.1" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
