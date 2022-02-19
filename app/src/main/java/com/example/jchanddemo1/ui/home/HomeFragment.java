@@ -40,24 +40,24 @@ public class HomeFragment extends Fragment {
     private int mPlayActive = -1;
     private int mPauseActive = -1;
 
-    private class ButtonXYMap{
+    private static class ButtonXYMap{
         final int PURPLE500 = 0xFF6200EE;
         ButtonXYMap(LinearLayout parent){
             m_currentTrackX = -1;
             m_currentTrackY = -1;
-            m_CurrentTrackChanged = true;
             m_parent = parent;
             m_nbLines = m_parent.getChildCount();
             LinearLayout subParent =  (LinearLayout) m_parent.getChildAt(0);
             m_nbColumn = subParent.getChildCount();
-            m_buttons = new Button[m_nbColumn * m_nbLines];
             Log.i("ButtonXYMap", "Nb buttons : " + (m_nbColumn * m_nbLines));
 
             for (int x = 0 ; x < m_nbColumn; x++){
                 for (int y = 0 ; y < m_nbLines; y++){
                     Button button = getButtonAt(x,y);
-                    button.setOnClickListener(new ButtonXYClickListener(x, y));
-                    setButtonState(x,y,"");
+                    if (button != null) {
+                        button.setOnClickListener(new ButtonXYClickListener(x, y));
+                        setButtonState(x, y, "");
+                    }
                 }
             }
         }
@@ -70,7 +70,6 @@ public class HomeFragment extends Fragment {
             }
             m_currentTrackX = trackId % m_nbColumn;
             m_currentTrackY = trackId / m_nbColumn;
-            m_CurrentTrackChanged = true;
             Log.e("setActiveTrackId", "m_currentTrackX= "+ m_currentTrackX +",  m_currentTrackY="+m_currentTrackY);
             button = getButtonAt(m_currentTrackX,m_currentTrackY);
             if (button != null){
@@ -103,7 +102,7 @@ public class HomeFragment extends Fragment {
         }
 
         private int indexOf(int x, int y){
-            return 0 + x + (y*m_nbColumn);
+            return x + (y * m_nbColumn);
         }
 
         private void setButtonState(int x, int y, String title){
@@ -114,7 +113,7 @@ public class HomeFragment extends Fragment {
                     if (button.isClickable()) {
                         // Clear (empty)
                         button.setClickable(false);
-                        button.setText("No track " + (1 + indexOf(x, y)));
+                        button.setText(String.format("No track %d", 1 + indexOf(x, y)));
                         button.setBackgroundColor(Color.GRAY);
                     }
                     if (isActive){
@@ -146,12 +145,10 @@ public class HomeFragment extends Fragment {
         }
 
         final private LinearLayout m_parent;
-        private int m_nbLines;
-        private int m_nbColumn;
+        private final int m_nbLines;
+        private final int m_nbColumn;
         private int m_currentTrackX;
         private int m_currentTrackY;
-        private boolean m_CurrentTrackChanged = false;
-        private Button m_buttons[];
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -178,59 +175,43 @@ public class HomeFragment extends Fragment {
             toast.show();
         }
         m_wgtPlayBtn = root.findViewById(R.id.imageBtnPlay);
-        m_wgtPlayBtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                PbkrContext.instance.playStatus = -1;
-                PbkrContext.instance.stopStatus = 1;
-                PbkrOSC.instance.send("/pbkrctrl/pPlay", 1.0f);
-                refreshPlayStatus();
-            }
+        m_wgtPlayBtn.setOnClickListener(v -> {
+            PbkrContext.instance.playStatus = -1;
+            PbkrContext.instance.stopStatus = 1;
+            PbkrOSC.instance.send("/pbkrctrl/pPlay", 1.0f);
+            refreshPlayStatus();
         });
 
         m_wgtStopBtn = root.findViewById(R.id.imageBtnStop);
-        m_wgtStopBtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                PbkrContext.instance.playStatus = -1;
-                PbkrContext.instance.stopStatus = -1;
-                PbkrOSC.instance.send("/pbkrctrl/pStop", 1.0f);
-                refreshPlayStatus();
-            }
+        m_wgtStopBtn.setOnClickListener(v -> {
+            PbkrContext.instance.playStatus = -1;
+            PbkrContext.instance.stopStatus = -1;
+            PbkrOSC.instance.send("/pbkrctrl/pStop", 1.0f);
+            refreshPlayStatus();
         });
 
         m_wgtPauseBtn = root.findViewById(R.id.imageBtnPause);
-        m_wgtPauseBtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                PbkrContext.instance.playStatus = -1;
-                PbkrContext.instance.stopStatus = 1;
-                PbkrOSC.instance.send("/pbkrctrl/pPause", 1.0f);
-                refreshPlayStatus();
-            }
+        m_wgtPauseBtn.setOnClickListener(v -> {
+            PbkrContext.instance.playStatus = -1;
+            PbkrContext.instance.stopStatus = 1;
+            PbkrOSC.instance.send("/pbkrctrl/pPause", 1.0f);
+            refreshPlayStatus();
         });
 
         m_wgtTimeCode = root.findViewById(R.id.labelTimeCode);
 
         m_wgtBtnRefresh = root.findViewById((R.id.btnSync));
-        m_wgtBtnRefresh.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                PbkrContext.instance.playStatus = -1;
-                PbkrContext.instance.stopStatus = 1;
-                PbkrOSC.instance.send("/pbkrctrl/pPause", 1.0f);
-                refreshPlayStatus();
-            }
+        m_wgtBtnRefresh.setOnClickListener(v -> {
+            PbkrContext.instance.playStatus = -1;
+            PbkrContext.instance.stopStatus = 1;
+            PbkrOSC.instance.send("/pbkrctrl/pPause", 1.0f);
+            refreshPlayStatus();
         });
 
         m_wgtBtnFF = root.findViewById(R.id.imageBtnFastForward);
-        m_wgtBtnFF.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                PbkrOSC.instance.send("/pbkrctrl/pFastForward", 1.0f);
-            }
-        });
+        m_wgtBtnFF.setOnClickListener(v -> PbkrOSC.instance.send("/pbkrctrl/pFastForward", 1.0f));
         m_wgtBtnRew = root.findViewById(R.id.imageBtnRewind);
-        m_wgtBtnRew.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                PbkrOSC.instance.send("/pbkrctrl/pBackward", 1.0f);
-            }
-        });
+        m_wgtBtnRew.setOnClickListener(v -> PbkrOSC.instance.send("/pbkrctrl/pBackward", 1.0f));
 
         // Find all Track buttons
         m_trackButtons = new ButtonXYMap(root.findViewById(R.id.layoutTracks));
@@ -256,78 +237,50 @@ public class HomeFragment extends Fragment {
         refreshPlayStatus();
     }
     public void refreshCurrentTimeCode() {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                m_wgtTimeCode.setText(PbkrContext.instance.currentTimeCode);
-            }
-        });
+        mHandler.post(() -> m_wgtTimeCode.setText(PbkrContext.instance.currentTimeCode));
     }
 
     public void setTrackName(int trackId, String paramStr) {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                m_trackButtons.setTrackName(trackId, paramStr);
-            }
-        });
+        mHandler.post(() -> m_trackButtons.setTrackName(trackId, paramStr));
     }
 
     public void setCurrentTrackNum(int trackId){
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                m_trackButtons.setActiveTrackId(trackId);
-            }
-        });
+        mHandler.post(() -> m_trackButtons.setActiveTrackId(trackId));
     }
     public void refreshCurrentProjectName() {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                m_wgtProjectName.setText(PbkrContext.instance.currentProject);
-            }
-        });
+        mHandler.post(() -> m_wgtProjectName.setText(PbkrContext.instance.currentProject));
     }
 
     public void refreshCurrentTrackName() {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                m_wgtTrackName.setText("Track : " +PbkrContext.instance.currentTrack);
-            }
-        });
+        mHandler.post(() -> m_wgtTrackName.setText("Track : " +PbkrContext.instance.currentTrack));
     }
 
     public void refreshPlayStatus() {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                final int BLUE2 = 0xFF0099CC;
-                final int bPlayActive = PbkrContext.instance.playStatus;
-                final int bPauseActive = PbkrContext.instance.pauseStatus;
-                final int bStopActive = PbkrContext.instance.stopStatus;
-                if (bStopActive != mStopActive){
-                    mStopActive = bStopActive;
-                    m_wgtStopBtn.setClickable(bStopActive > 0);
-                    m_wgtStopBtn.setBackgroundColor(bStopActive > 0? Color.RED : Color.GRAY);
-                    m_wgtBtnFF.setBackgroundColor(bStopActive == 0? Color.GRAY : BLUE2);
-                    m_wgtBtnRew.setBackgroundColor(bStopActive == 0? Color.GRAY : BLUE2);
-                    m_wgtBtnFF.setClickable(bStopActive > 0);
-                    m_wgtBtnRew.setClickable(bStopActive > 0);
-                }
+        mHandler.post(() -> {
+            final int BLUE2 = 0xFF0099CC;
+            final int bPlayActive = PbkrContext.instance.playStatus;
+            final int bPauseActive = PbkrContext.instance.pauseStatus;
+            final int bStopActive = PbkrContext.instance.stopStatus;
+            if (bStopActive != mStopActive){
+                mStopActive = bStopActive;
+                m_wgtStopBtn.setClickable(bStopActive > 0);
+                m_wgtStopBtn.setBackgroundColor(bStopActive > 0? Color.RED : Color.GRAY);
+                m_wgtBtnFF.setBackgroundColor(bStopActive == 0? Color.GRAY : BLUE2);
+                m_wgtBtnRew.setBackgroundColor(bStopActive == 0? Color.GRAY : BLUE2);
+                m_wgtBtnFF.setClickable(bStopActive > 0);
+                m_wgtBtnRew.setClickable(bStopActive > 0);
+            }
 
-                if (bPlayActive != mPlayActive){
-                    mPlayActive = bPlayActive;
-                    m_wgtPlayBtn.setClickable(bPlayActive > 0);
-                    m_wgtPlayBtn.setBackgroundColor(bPlayActive > 0 ? Color.GREEN : Color.GRAY);
-                }
+            if (bPlayActive != mPlayActive){
+                mPlayActive = bPlayActive;
+                m_wgtPlayBtn.setClickable(bPlayActive > 0);
+                m_wgtPlayBtn.setBackgroundColor(bPlayActive > 0 ? Color.GREEN : Color.GRAY);
+            }
 
-                if (bPauseActive != mPauseActive){
-                    mPauseActive = bPauseActive;
-                    m_wgtPauseBtn.setClickable(bPauseActive > 0);
-                    m_wgtPauseBtn.setBackgroundColor(bPauseActive > 0 ? 0xFFFF8800 : Color.GRAY);
-                }
+            if (bPauseActive != mPauseActive){
+                mPauseActive = bPauseActive;
+                m_wgtPauseBtn.setClickable(bPauseActive > 0);
+                m_wgtPauseBtn.setBackgroundColor(bPauseActive > 0 ? 0xFFFF8800 : Color.GRAY);
             }
         });
     }

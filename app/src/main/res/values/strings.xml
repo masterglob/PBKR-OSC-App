@@ -16,4 +16,6 @@
     <string name="server_in_port">Input port</string>
     <string name="server_out_port">Output port</string>
     <string name="label_checkConfig">Check config</string>
+    <string name="playlist">Playlist</string>
+    <string name="nb_tracks">Nb tracks:</string>
 </resources>

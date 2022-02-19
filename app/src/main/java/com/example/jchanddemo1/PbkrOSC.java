@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
     /pbkrctrl/lTrack => String (current track)
     /pbkrctrl/project[1..9] => project names
     /pbkrctrl/lTrack[1..64] => track name (active project)
-    /pbkrctrl/mtTrackSel/2/1 => INT (current track = pos X/Y??? TODO)
+    /pbkrctrl/mtTrackSel/2/1 => INT (current track = pos Y/X)
         MENU PAGE
     /pbkrmenu/project[1..10] => project names
     /pbkrmenu/project[1..10]/color => project color (string)
@@ -119,7 +119,6 @@ public class PbkrOSC {
                     m = reCtrlPlay.matcher(name);
                     if (m.matches()){
                         context.playStatus = (param.getFloatValue() > 0.01 ? 1 : 0);
-                        Log.e("OSC recevied reCtrlPlay", "ctxt.playStatus=" +String.valueOf(context.playStatus));
                         m_homeFragment.refreshPlayStatus();
                         continue;
                     }
@@ -127,7 +126,6 @@ public class PbkrOSC {
                     m = reCtrlPause.matcher(name);
                     if (m.matches()){
                         context.pauseStatus = (param.getFloatValue() > 0.01 ? 1 : 0);
-                        Log.e("OSC recevied pauseStatus", "ctxt.pauseStatus=" +String.valueOf(context.pauseStatus));
                         m_homeFragment.refreshPlayStatus();
                         continue;
                     }
@@ -135,7 +133,6 @@ public class PbkrOSC {
                     m = reCtrlStop.matcher(name);
                     if (m.matches()){
                         context.stopStatus = (param.getFloatValue() > 0.01 ? 1 : 0);
-                        Log.e("OSC recevied reCtrlStop", "ctxt.stopStatus=" +String.valueOf(context.stopStatus));
                         m_homeFragment.refreshPlayStatus();
                         continue;
                     }
@@ -161,18 +158,11 @@ public class PbkrOSC {
                         continue;
                     }
 
-                    m = reCtrlProject.matcher(name);
-                    if (m.matches()){
-                        // TODO
-                        continue;
-                    }
-
                     m = reCtrlTrackName.matcher(name);
                     if (m.matches()){
                         try {
                             int trackId = Integer.valueOf(m.group(1));
                             m_homeFragment.setTrackName(trackId, paramStr);
-                             // TODO
                         }
                         catch (NumberFormatException n){
                             Log.e("reCtrlTrackName","Param=" + paramStr + "TT=[" +m.group(1) + "]");
@@ -190,6 +180,12 @@ public class PbkrOSC {
                         catch (NumberFormatException n){
                             Log.e("reCtrlTrackId","Param=" + paramStr + "X,Y=[" +m.group(2)+","+ m.group(1) + "]");
                         }
+                        continue;
+                    }
+
+                    m = reCtrlProject.matcher(name);
+                    if (m.matches()){
+                        // TODO
                         continue;
                     }
 

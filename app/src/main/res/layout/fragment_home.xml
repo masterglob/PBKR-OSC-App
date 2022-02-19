@@ -21,13 +21,13 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.87" />
+        app:layout_constraintVertical_bias="0.95" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Playlist"
+        android:text="@string/playlist"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -41,7 +41,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:text="0"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toBottomOf="@+id/textView"
         app:layout_constraintStart_toEndOf="@+id/textView" />
@@ -52,7 +51,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:text="Nb tracks:"
+        android:text="@string/nb_tracks"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
@@ -141,10 +140,11 @@
         android:id="@+id/labelTimeCode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         android:text="--:--"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintBottom_toTopOf="@+id/tableLayout"
-        app:layout_constraintEnd_toEndOf="@+id/tableLayout" />
+        app:layout_constraintEnd_toEndOf="@+id/tableLayout"
+        app:layout_constraintTop_toBottomOf="@+id/btnSync" />
 
     <ImageButton
         android:id="@+id/btnSync"
@@ -173,7 +173,7 @@
 
     <ScrollView
         android:layout_width="344dp"
-        android:layout_height="218dp"
+        android:layout_height="280dp"
         android:layout_marginTop="7dp"
         app:layout_constraintBottom_toTopOf="@+id/text_home"
         app:layout_constraintEnd_toEndOf="@+id/tableLayout"
@@ -320,7 +320,12 @@
                 android:id="@+id/layoutt10_12"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:clipToPadding="false"
+                android:dividerPadding="20dp"
+                android:duplicateParentState="false"
+                android:orientation="horizontal"
+                android:paddingHorizontal="5dp"
+                android:paddingLeft="20dp">
 
                 <Button
                     android:id="@+id/btnTrack10"
@@ -358,7 +363,12 @@
                 android:id="@+id/layoutt13_15"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:clipToPadding="false"
+                android:dividerPadding="20dp"
+                android:duplicateParentState="false"
+                android:orientation="horizontal"
+                android:paddingHorizontal="5dp"
+                android:paddingLeft="20dp">
 
                 <Button
                     android:id="@+id/btnTrack13"
