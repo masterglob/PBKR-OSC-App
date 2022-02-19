@@ -169,13 +169,27 @@ public class PbkrOSC {
 
                     m = reCtrlTrackName.matcher(name);
                     if (m.matches()){
-                        // TODO
+                        try {
+                            int trackId = Integer.valueOf(m.group(1));
+                            m_homeFragment.setTrackName(trackId, paramStr);
+                             // TODO
+                        }
+                        catch (NumberFormatException n){
+                            Log.e("reCtrlTrackName","Param=" + paramStr + "TT=[" +m.group(1) + "]");
+                        }
                         continue;
                     }
 
                     m = reCtrlTrackId.matcher(name);
                     if (m.matches()){
-                        // TODO
+                        try {
+                            int y = Integer.valueOf(m.group(1));
+                            int x = Integer.valueOf(m.group(2));
+                            m_homeFragment.setCurrentTrackNum(trackId(x, y));
+                        }
+                        catch (NumberFormatException n){
+                            Log.e("reCtrlTrackId","Param=" + paramStr + "X,Y=[" +m.group(2)+","+ m.group(1) + "]");
+                        }
                         continue;
                     }
 
@@ -237,6 +251,32 @@ public class PbkrOSC {
                 }
             }
         }
+    }
+
+    static private final int PAD_WIDTH = 7;
+    static private final int PAD_HEIGHT = 2;
+    /**
+     * @param x Xpos in pad (left=1, right = PAD_NBX)
+     * @param y YPos in pad (top = PAD_NBY, bott = 1)
+     * @return Track Id (first = 0)
+     */
+    static public int trackId(int x, int y){
+        return (x - 1) + (PAD_HEIGHT - y) * PAD_WIDTH;
+    }
+
+    /**
+     * @param trackId Track Id (First = 0)
+     * @return PAD X position in [1..PAD_WIDTH]
+     */
+    static public int trackPadX(int trackId){
+        return 1+ (trackId % PAD_WIDTH);
+    }
+    /**
+     * @param trackId Track Id (First = 0)
+     * @return PAD Y position in [1..PAD_HEIGHT]
+     */
+    static public int trackPadY(int trackId){
+        return PAD_HEIGHT - (trackId / PAD_WIDTH);
     }
 
     private PbkrUDP_Itf mUdp;

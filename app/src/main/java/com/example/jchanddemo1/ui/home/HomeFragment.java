@@ -7,7 +7,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,10 +34,125 @@ public class HomeFragment extends Fragment {
     private ImageButton m_wgtBtnRefresh = null;
     private ImageButton m_wgtBtnFF = null;
     private ImageButton m_wgtBtnRew = null;
+    private ButtonXYMap m_trackButtons = null;
     private Handler mHandler;
     private int mStopActive = -1;
     private int mPlayActive = -1;
     private int mPauseActive = -1;
+
+    private class ButtonXYMap{
+        final int PURPLE500 = 0xFF6200EE;
+        ButtonXYMap(LinearLayout parent){
+            m_currentTrackX = -1;
+            m_currentTrackY = -1;
+            m_CurrentTrackChanged = true;
+            m_parent = parent;
+            m_nbLines = m_parent.getChildCount();
+            LinearLayout subParent =  (LinearLayout) m_parent.getChildAt(0);
+            m_nbColumn = subParent.getChildCount();
+            m_buttons = new Button[m_nbColumn * m_nbLines];
+            Log.i("ButtonXYMap", "Nb buttons : " + (m_nbColumn * m_nbLines));
+
+            for (int x = 0 ; x < m_nbColumn; x++){
+                for (int y = 0 ; y < m_nbLines; y++){
+                    Button button = getButtonAt(x,y);
+                    button.setOnClickListener(new ButtonXYClickListener(x, y));
+                    setButtonState(x,y,"");
+                }
+            }
+        }
+
+        public void setActiveTrackId(int trackId) {
+            Log.e("setActiveTrackId", "TrackId= "+ trackId);
+            Button button = getButtonAt(m_currentTrackX,m_currentTrackY);
+            if (button != null){
+                button.setBackgroundColor(PURPLE500);
+            }
+            m_currentTrackX = trackId % m_nbColumn;
+            m_currentTrackY = trackId / m_nbColumn;
+            m_CurrentTrackChanged = true;
+            Log.e("setActiveTrackId", "m_currentTrackX= "+ m_currentTrackX +",  m_currentTrackY="+m_currentTrackY);
+            button = getButtonAt(m_currentTrackX,m_currentTrackY);
+            if (button != null){
+                button.setBackgroundColor(Color.RED);
+            }
+        }
+
+        /**
+         * @param trackId Track index (First track is 1)
+         * @param title Track title
+         */
+        public void setTrackName(int trackId, String title) {
+            trackId -= 1;
+            int x = trackId % m_nbColumn;
+            int y = trackId / m_nbColumn;
+            setButtonState(x, y, title);
+        }
+
+        private class ButtonXYClickListener implements  View.OnClickListener{
+            private final String m_cmd;
+
+            ButtonXYClickListener(int x, int y){
+                final int trackId = indexOf(x,y);
+                m_cmd = "/pbkrctrl/mtTrackSel/"+ PbkrOSC.trackPadY(trackId)+"/"+ PbkrOSC.trackPadX(trackId);
+            }
+            @Override
+            public void onClick(View view) {
+                PbkrOSC.instance.send(m_cmd, 1.0f);
+            }
+        }
+
+        private int indexOf(int x, int y){
+            return 0 + x + (y*m_nbColumn);
+        }
+
+        private void setButtonState(int x, int y, String title){
+            Button button = getButtonAt(x,y);
+            final boolean isActive = (x == m_currentTrackX && y ==m_currentTrackY);
+            if (button != null){
+                if (title.isEmpty()){
+                    if (button.isClickable()) {
+                        // Clear (empty)
+                        button.setClickable(false);
+                        button.setText("No track " + (1 + indexOf(x, y)));
+                        button.setBackgroundColor(Color.GRAY);
+                    }
+                    if (isActive){
+                        m_currentTrackX = -1;
+                        m_currentTrackY = -1;
+                    }
+                }
+                else{
+                    // Button is activable
+                    int bgColor = (isActive ? Color.RED : PURPLE500 );
+                    if (!button.isClickable() || !button.getText().equals(title)) {
+                        button.setClickable(true);
+                        button.setBackgroundColor(bgColor);
+                        button.setText(title);
+                    }
+                }
+            }
+        }
+
+        public Button getButtonAt(int x, int y){
+            if (x < 0 || y < 0 || y >= m_nbLines){
+                return null;
+            }
+            LinearLayout subParent = (LinearLayout) m_parent.getChildAt(y);
+            if (x >= subParent.getChildCount()){
+                return null;
+            }
+            return (Button)subParent.getChildAt(x);
+        }
+
+        final private LinearLayout m_parent;
+        private int m_nbLines;
+        private int m_nbColumn;
+        private int m_currentTrackX;
+        private int m_currentTrackY;
+        private boolean m_CurrentTrackChanged = false;
+        private Button m_buttons[];
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -115,6 +232,10 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        // Find all Track buttons
+        m_trackButtons = new ButtonXYMap(root.findViewById(R.id.layoutTracks));
+
+
         PbkrOSC.instance.setMainHomePage(this);
 
         refreshAll();
@@ -143,6 +264,23 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    public void setTrackName(int trackId, String paramStr) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                m_trackButtons.setTrackName(trackId, paramStr);
+            }
+        });
+    }
+
+    public void setCurrentTrackNum(int trackId){
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                m_trackButtons.setActiveTrackId(trackId);
+            }
+        });
+    }
     public void refreshCurrentProjectName() {
         mHandler.post(new Runnable() {
             @Override

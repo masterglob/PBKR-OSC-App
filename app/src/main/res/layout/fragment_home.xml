@@ -50,8 +50,8 @@
         android:id="@+id/tv_currTrack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:text="Nb tracks:"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintStart_toStartOf="parent"
@@ -60,20 +60,22 @@
     <TableLayout
         android:id="@+id/tableLayout"
         android:layout_width="338dp"
-        android:layout_height="184dp"
-        android:layout_marginStart="8dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="2dp"
         android:layout_marginTop="4dp"
+        android:layout_marginEnd="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_currTrack">
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <ImageButton
                 android:id="@+id/imageBtnPlay"
                 android:layout_width="120dp"
-                android:layout_height="90dp"
+                android:layout_height="70dp"
                 android:layout_margin="2dp"
                 android:layout_weight="1"
                 android:background="@android:color/holo_green_dark"
@@ -84,17 +86,18 @@
             <ImageButton
                 android:id="@+id/imageBtnPause"
                 android:layout_width="120dp"
-                android:layout_height="90dp"
+                android:layout_height="70dp"
                 android:layout_margin="2dp"
                 android:layout_weight="1"
                 android:background="@android:color/holo_orange_dark"
                 android:contentDescription="@string/pause"
-                android:src="@android:drawable/ic_media_pause" />
+                android:src="@android:drawable/ic_media_pause"
+                tools:ignore="ImageContrastCheck" />
 
             <ImageButton
                 android:id="@+id/imageBtnStop"
                 android:layout_width="120dp"
-                android:layout_height="90dp"
+                android:layout_height="70dp"
                 android:layout_margin="2dp"
                 android:layout_weight="1"
                 android:background="@android:color/holo_red_dark"
@@ -106,23 +109,24 @@
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <ImageButton
                 android:id="@+id/imageBtnRewind"
                 android:layout_width="120dp"
-                android:layout_height="90dp"
+                android:layout_height="70dp"
                 android:layout_margin="2dp"
                 android:layout_weight="1"
                 android:background="@android:color/holo_blue_light"
                 android:contentDescription="@string/rew"
                 android:src="@drawable/baseline_fast_rewind_24"
-                app:tint="@color/white" />
+                app:tint="@color/white"
+                tools:ignore="ImageContrastCheck,ImageContrastCheck" />
 
             <ImageButton
                 android:id="@+id/imageBtnFastForward"
                 android:layout_width="120dp"
-                android:layout_height="90dp"
+                android:layout_height="70dp"
                 android:layout_margin="2dp"
                 android:layout_weight="1"
                 android:background="@android:color/holo_blue_dark"
@@ -144,17 +148,250 @@
 
     <ImageButton
         android:id="@+id/btnSync"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
+        android:layout_width="32dp"
+        android:layout_height="37dp"
         android:background="@color/cardview_shadow_end_color"
+        android:contentDescription="Refresh buttons"
         android:scaleType="fitXY"
         android:src="@android:drawable/stat_notify_sync_noanim"
-        android:tint="@color/purple_700"
         app:layout_constraintBottom_toTopOf="@+id/labelTimeCode"
         app:layout_constraintEnd_toEndOf="@+id/tableLayout"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.1" />
+        app:layout_constraintVertical_bias="0.0"
+        app:tint="@color/purple_700"
+        tools:ignore="TouchTargetSizeCheck" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="409dp"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tableLayout" />
+
+    <ScrollView
+        android:layout_width="344dp"
+        android:layout_height="218dp"
+        android:layout_marginTop="7dp"
+        app:layout_constraintBottom_toTopOf="@+id/text_home"
+        app:layout_constraintEnd_toEndOf="@+id/tableLayout"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="SpeakableTextPresentCheck">
+
+        <LinearLayout
+            android:id="@+id/layoutTracks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/layoutt1to3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:dividerPadding="20dp"
+                android:duplicateParentState="false"
+                android:orientation="horizontal"
+                android:paddingHorizontal="5dp"
+                android:paddingLeft="20dp">
+
+                <Button
+                    android:id="@+id/btnTrack1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="75dp"
+                    android:layout_weight="1"
+                    android:paddingHorizontal="8dp"
+                    android:scaleX="0.95"
+                    android:scaleY="0.95"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+                <Button
+                    android:id="@+id/btnTrack2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="75dp"
+                    android:layout_weight="1"
+                    android:paddingHorizontal="8dp"
+                    android:scaleX="0.95"
+                    android:scaleY="0.95"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+                <Button
+                    android:id="@+id/btnTrack3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="75dp"
+                    android:layout_weight="1"
+                    android:paddingHorizontal="8dp"
+                    android:scaleX="0.95"
+                    android:scaleY="0.95"
+                    tools:ignore="SpeakableTextPresentCheck" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutt4_6"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:dividerPadding="20dp"
+                android:duplicateParentState="false"
+                android:orientation="horizontal"
+                android:paddingHorizontal="5dp"
+                android:paddingLeft="20dp">
+
+                <Button
+                    android:id="@+id/btnTrack4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="75dp"
+                    android:layout_weight="1"
+                    android:paddingHorizontal="8dp"
+                    android:scaleX="0.95"
+                    android:scaleY="0.95"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+                <Button
+                    android:id="@+id/btnTrack5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="75dp"
+                    android:layout_weight="1"
+                    android:paddingHorizontal="8dp"
+                    android:scaleX="0.95"
+                    android:scaleY="0.95"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+                <Button
+                    android:id="@+id/btnTrack6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="75dp"
+                    android:layout_weight="1"
+                    android:paddingHorizontal="8dp"
+                    android:scaleX="0.95"
+                    android:scaleY="0.95"
+                    tools:ignore="SpeakableTextPresentCheck" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutt7_9"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:dividerPadding="20dp"
+                android:duplicateParentState="false"
+                android:orientation="horizontal"
+                android:paddingHorizontal="5dp"
+                android:paddingLeft="20dp">
+
+                <Button
+                    android:id="@+id/btnTrack7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="75dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/purple_500"
+                    android:paddingHorizontal="8dp"
+                    android:scaleX="0.95"
+                    android:scaleY="0.95"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+                <Button
+                    android:id="@+id/btnTrack8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="75dp"
+                    android:layout_weight="1"
+                    android:paddingHorizontal="8dp"
+                    android:scaleX="0.95"
+                    android:scaleY="0.95"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+                <Button
+                    android:id="@+id/btnTrack9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="75dp"
+                    android:layout_weight="1"
+                    android:paddingHorizontal="8dp"
+                    android:scaleX="0.95"
+                    android:scaleY="0.95"
+                    tools:ignore="SpeakableTextPresentCheck" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutt10_12"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnTrack10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="75dp"
+                    android:layout_weight="1"
+                    android:paddingHorizontal="8dp"
+                    android:scaleX="0.95"
+                    android:scaleY="0.95"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+                <Button
+                    android:id="@+id/btnTrack11"
+                    android:layout_width="wrap_content"
+                    android:layout_height="75dp"
+                    android:layout_weight="1"
+                    android:paddingHorizontal="8dp"
+                    android:scaleX="0.95"
+                    android:scaleY="0.95"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+                <Button
+                    android:id="@+id/btnTrack12"
+                    android:layout_width="wrap_content"
+                    android:layout_height="75dp"
+                    android:layout_weight="1"
+                    android:paddingHorizontal="8dp"
+                    android:scaleX="0.95"
+                    android:scaleY="0.95"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutt13_15"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnTrack13"
+                    android:layout_width="wrap_content"
+                    android:layout_height="75dp"
+                    android:layout_weight="1"
+                    android:paddingHorizontal="8dp"
+                    android:scaleX="0.95"
+                    android:scaleY="0.95"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+                <Button
+                    android:id="@+id/btnTrack14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="75dp"
+                    android:layout_weight="1"
+                    android:paddingHorizontal="8dp"
+                    android:scaleX="0.95"
+                    android:scaleY="0.95"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+                <Button
+                    android:id="@+id/btnTrack15"
+                    android:layout_width="wrap_content"
+                    android:layout_height="75dp"
+                    android:layout_weight="1"
+                    android:paddingHorizontal="8dp"
+                    android:scaleX="0.95"
+                    android:scaleY="0.95"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
