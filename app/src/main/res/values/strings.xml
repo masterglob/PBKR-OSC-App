@@ -18,4 +18,6 @@
     <string name="label_checkConfig">Check config</string>
     <string name="playlist">Playlist</string>
     <string name="nb_tracks">Nb tracks:</string>
+    <string name="select_project">Select project</string>
+    <string name="no_project">No project</string>
 </resources>

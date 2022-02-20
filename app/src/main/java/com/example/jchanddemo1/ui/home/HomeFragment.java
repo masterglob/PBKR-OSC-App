@@ -60,17 +60,18 @@ public class HomeFragment extends Fragment {
                     }
                 }
             }
+            setActiveTrackId(PbkrContext.instance.getCurrentTrack());
         }
 
         public void setActiveTrackId(int trackId) {
-            Log.e("setActiveTrackId", "TrackId= "+ trackId);
+            // Log.e("setActiveTrackId", "TrackId= "+ trackId);
             Button button = getButtonAt(m_currentTrackX,m_currentTrackY);
             if (button != null){
                 button.setBackgroundColor(PURPLE500);
             }
             m_currentTrackX = trackId % m_nbColumn;
             m_currentTrackY = trackId / m_nbColumn;
-            Log.e("setActiveTrackId", "m_currentTrackX= "+ m_currentTrackX +",  m_currentTrackY="+m_currentTrackY);
+            // Log.e("setActiveTrackId", "m_currentTrackX= "+ m_currentTrackX +",  m_currentTrackY="+m_currentTrackY);
             button = getButtonAt(m_currentTrackX,m_currentTrackY);
             if (button != null){
                 button.setBackgroundColor(Color.RED);
@@ -108,7 +109,7 @@ public class HomeFragment extends Fragment {
         private void setButtonState(int x, int y, String title){
             Button button = getButtonAt(x,y);
             final boolean isActive = (x == m_currentTrackX && y ==m_currentTrackY);
-            if (button != null){
+            if (button != null && title != null){
                 if (title.isEmpty()){
                     if (button.isClickable()) {
                         // Clear (empty)
@@ -219,6 +220,10 @@ public class HomeFragment extends Fragment {
 
         PbkrOSC.instance.setMainHomePage(this);
 
+        for (int tt = 0; tt < PbkrContext.nbTracks; tt++) {
+            setTrackName(tt, PbkrContext.instance.getTrackName(tt));
+        }
+        
         refreshAll();
 
         return root;
@@ -227,6 +232,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        // PbkrOSC.instance.setMainHomePage(null);
         binding = null;
     }
 

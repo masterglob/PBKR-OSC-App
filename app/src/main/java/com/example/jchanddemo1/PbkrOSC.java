@@ -3,6 +3,7 @@ package com.example.jchanddemo1;
 import android.util.Log;
 
 import com.example.jchanddemo1.ui.home.HomeFragment;
+import com.example.jchanddemo1.ui.projects.ProjectsFragment;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,6 +27,7 @@ import java.util.regex.Pattern;
 public class PbkrOSC {
     public static PbkrOSC instance = new PbkrOSC();
     private HomeFragment m_homeFragment;
+    private ProjectsFragment m_projectsFragment;
     private MainActivity mActivity;
 
     public boolean reconfigure(){
@@ -45,13 +47,10 @@ public class PbkrOSC {
     {
         mUdp = new PbkrUDP_Itf();
         m_homeFragment = null;
+        m_projectsFragment = null;
         mActivity = null;
 
-        Thread thread = new Thread(new Runnable() {
-            public void run() {
-                mTaskImpl();
-            }
-        });
+        Thread thread = new Thread(this::mTaskImpl);
 
         thread.start();
     }
@@ -81,7 +80,7 @@ public class PbkrOSC {
         PbkrContext context = PbkrContext.instance;
 
         while (mUdp.isRunning()) {
-            if (mPingSent == false) {
+            if (!mPingSent) {
                 mUdp.send(new PbkrUDP_Itf.OSC_Msg("/ping"));
                 Log.i("OSC", "send PING");
                 mPingSent = true;
@@ -119,50 +118,51 @@ public class PbkrOSC {
                     m = reCtrlPlay.matcher(name);
                     if (m.matches()){
                         context.playStatus = (param.getFloatValue() > 0.01 ? 1 : 0);
-                        m_homeFragment.refreshPlayStatus();
+                        if (m_homeFragment != null) m_homeFragment.refreshPlayStatus();
                         continue;
                     }
 
                     m = reCtrlPause.matcher(name);
                     if (m.matches()){
                         context.pauseStatus = (param.getFloatValue() > 0.01 ? 1 : 0);
-                        m_homeFragment.refreshPlayStatus();
+                        if (m_homeFragment != null) m_homeFragment.refreshPlayStatus();
                         continue;
                     }
 
                     m = reCtrlStop.matcher(name);
                     if (m.matches()){
                         context.stopStatus = (param.getFloatValue() > 0.01 ? 1 : 0);
-                        m_homeFragment.refreshPlayStatus();
+                        if (m_homeFragment != null)  m_homeFragment.refreshPlayStatus();
                         continue;
                     }
 
                     m = reCtrlTimeCode.matcher(name);
                     if (m.matches()){
                         context.currentTimeCode = paramStr;
-                        m_homeFragment.refreshCurrentTimeCode();
+                        if (m_homeFragment != null) m_homeFragment.refreshCurrentTimeCode();
                         continue;
                     }
 
                     m = reCurrProjectName.matcher(name);
                     if (m.matches()){
                         context.currentProject = paramStr;
-                        m_homeFragment.refreshCurrentProjectName();
+                        if (m_homeFragment != null) m_homeFragment.refreshCurrentProjectName();
                         continue;
                     }
 
                     m = reCurrTrackName.matcher(name);
                     if (m.matches()){
                         context.currentTrack = paramStr;
-                        m_homeFragment.refreshCurrentTrackName();
+                        if (m_homeFragment != null) m_homeFragment.refreshCurrentTrackName();
                         continue;
                     }
 
                     m = reCtrlTrackName.matcher(name);
-                    if (m.matches()){
+                    if (m.matches() && m.group(1) != null){
                         try {
-                            int trackId = Integer.valueOf(m.group(1));
-                            m_homeFragment.setTrackName(trackId, paramStr);
+                            int trackId = Integer.parseInt(m.group(1));
+                            context.setTrackName(trackId, paramStr);
+                            if (m_homeFragment != null) m_homeFragment.setTrackName(trackId, paramStr);
                         }
                         catch (NumberFormatException n){
                             Log.e("reCtrlTrackName","Param=" + paramStr + "TT=[" +m.group(1) + "]");
@@ -171,11 +171,13 @@ public class PbkrOSC {
                     }
 
                     m = reCtrlTrackId.matcher(name);
-                    if (m.matches()){
+                    if (m.matches() && m.group(1) != null && m.group(2) != null){
                         try {
                             int y = Integer.valueOf(m.group(1));
                             int x = Integer.valueOf(m.group(2));
-                            m_homeFragment.setCurrentTrackNum(trackId(x, y));
+                            final int tt = trackId(x, y);
+                            context.setCurrentTrack(tt);
+                            if (m_homeFragment != null) m_homeFragment.setCurrentTrackNum(tt);
                         }
                         catch (NumberFormatException n){
                             Log.e("reCtrlTrackId","Param=" + paramStr + "X,Y=[" +m.group(2)+","+ m.group(1) + "]");
@@ -183,25 +185,46 @@ public class PbkrOSC {
                         continue;
                     }
 
-                    m = reCtrlProject.matcher(name);
-                    if (m.matches()){
-                        // TODO
-                        continue;
-                    }
-
                     m = reMenuProjName.matcher(name);
-                    if (m.matches()){
-                        // TODO
+                    if (m.matches() && m.group(1) != null){
+                        try {
+                            int pp = Integer.valueOf(m.group(1)) - 1;
+                            context.setProjectName(pp, paramStr);
+                            if (m_projectsFragment != null) m_projectsFragment.setProjectName(pp, paramStr);
+                        }
+                        catch (NumberFormatException n){
+                            Log.e("reMenuProjName","Param=" + paramStr + "PP=[" + m.group(1) + "]");
+                        }
                         continue;
                     }
 
                     m = reMenuProjColor.matcher(name);
-                    if (m.matches()){
-                        // TODO
+                    if (m.matches() && m.group(1) != null){
+                        try {
+                            int pp = Integer.valueOf(m.group(1)) - 1;
+                            context.setProjectColor(pp, paramStr);
+                            if (m_projectsFragment != null) m_projectsFragment.setProjectColor(pp, paramStr);
+                        }
+                        catch (NumberFormatException n){
+                            Log.e("reMenuProjColor","Param=" + paramStr + "PP=[" + m.group(1) + "]");
+                        }
                         continue;
                     }
 
                     m = reMenuProjVisible.matcher(name);
+                    if (m.matches() && m.group(1) != null){
+                        try {
+                            int pp = Integer.valueOf(m.group(1)) - 1;
+                            context.setProjectVisibility(pp, param.getIntValue() > 0);
+                            if (m_projectsFragment != null) m_projectsFragment.setProjectVisible(pp, param.getIntValue() > 0);
+                        }
+                        catch (NumberFormatException n){
+                            Log.e("reMenuProjVisible","Param=" + paramStr + "PP=[" + m.group(1) + "]");
+                        }
+                        continue;
+                    }
+
+                    m = reCtrlProject.matcher(name);
                     if (m.matches()){
                         // TODO
                         continue;
@@ -220,13 +243,13 @@ public class PbkrOSC {
                     }
                     m = reMenuLine1.matcher(name);
                     if (m.matches()){
-                        // TODO
+                        if (m_projectsFragment != null) m_projectsFragment.setMenuL1(paramStr);
                         continue;
                     }
 
                     m = reMenuLine2.matcher(name);
                     if (m.matches()){
-                        // TODO
+                        if (m_projectsFragment != null) m_projectsFragment.setMenuL2(paramStr);
                         continue;
                     }
 
@@ -281,7 +304,8 @@ public class PbkrOSC {
         mActivity = mainActivity;
     }
 
-    public void setMainHomePage(HomeFragment homeFragment) {
-        m_homeFragment = homeFragment;
+    public void setMainHomePage(HomeFragment homeFragment) {m_homeFragment = homeFragment;}
+    public void setProjectPage(ProjectsFragment fragment) {
+        m_projectsFragment = fragment;
     }
 }
